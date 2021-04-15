@@ -1,2 +1,2 @@
 # CRUDEmpPractice
-I have created CRUD application of employee  
+I have created Java Spring Boot CRUD application of employee with jsp pages.
