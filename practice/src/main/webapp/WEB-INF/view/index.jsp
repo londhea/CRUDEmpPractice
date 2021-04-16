@@ -17,6 +17,8 @@
 
 	<div align="center" style="margin:50px 0 0 0">
 		<h2 class="display-4">Hello...Welcome to Homepage</h2>
+		<hr>		
+		<a href="/employees"><button class="btn btn-primary">List of Employee</button></a>
 	</div>
 </body>
 </html>
