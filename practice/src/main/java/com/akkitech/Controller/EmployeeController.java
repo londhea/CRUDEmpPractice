@@ -6,6 +6,7 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,174 +22,76 @@ import org.springframework.web.servlet.ModelAndView;
 import com.akkitech.Model.Employee;
 import com.akkitech.Service.EmployeeService;
 
-@RestController
+import net.bytebuddy.dynamic.scaffold.MethodGraph.NodeList;
+
+@Controller
 public class EmployeeController {
 
 	
 	@Autowired
 	EmployeeService service;
 	
+	//Getting index page
 	@RequestMapping(value = "/index")
 	public String name() {
 		return "index";
 	}
 	
+	//Getting add Employee page
 	@RequestMapping(value = "/add")
-	public ModelAndView add() {
-		ModelAndView mv=new ModelAndView("addEmp");
-		return mv;
+	public String add() {
+		return "addEmp";
 	}
 	
 	//Save Employee
 	@PostMapping(value = "/employee")
-	public ModelAndView add(Employee employee)
+	public String add(Employee employee)
 	{
-		ModelAndView mv=new ModelAndView("/employees");
 		service.add(employee);
-		return mv;
-		
+		return "redirect:/employees";
 	}
-	
-
-	/*
-	//Save Multiple Employee
-	@PostMapping(value = "/employees")
-	public ModelAndView addAll(@RequestBody List<Employee> employee)
-	{
-		ModelAndView mv=new ModelAndView("listUser");
-		service.addAll(employee);
-		return mv;
 		
-	}
-	*/
-	
 	//Fetch List of Employees
 	@GetMapping(value = "/employees")
-	public ModelAndView getAllEmployee()
+	public String getAllEmployee(Model model)
 	{
-		ModelAndView mv=new ModelAndView("listEmp");
 		List<Employee> employees=service.getAllEmployee();
-		mv.addObject("employees", employees);
-		return mv;
+		model.addAttribute("employees", employees);
+		return "listEmp";
 		
 
 	}
 	
 	//Fetch Single Employee
 	@GetMapping(value = "/employee/{id}")
-	public ModelAndView getEmpById(@PathVariable("id") int id)
+	public String getEmpById(@PathVariable("id") int id)
 	{
-		ModelAndView mv=new ModelAndView("/employees");
 		service.getEmpById(id);
-		return mv;
+		return "/employees";
 	}
 	
 	//Delete Employee
-	@DeleteMapping(value = "/delete/{id}")
-	public ModelAndView deleteEmpById(@PathVariable("id") int id)
+	@GetMapping(value = "/delete/{id}")
+	public String deleteEmpById(@PathVariable("id") int id)
 	{
-		ModelAndView mv=new ModelAndView("listEmp");
 		service.deleteEmpById(id);
-		return mv;
+		return "redirect:/employees";
 	}
 	
+	//Show Edit employee form
 	@RequestMapping(value = "/edit/{id}", method=RequestMethod.GET)
-	public ModelAndView update(@PathVariable("id") int id, Model model)
+	public String update(@PathVariable("id") int id, Model model)
 	{
-		ModelAndView mv=new ModelAndView("editEmp");
 		model.addAttribute("employee", service.getEmpById(id));
-		return mv;
+		return "editEmp";
 	}
 	
 	//Update Employee
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public ModelAndView update(Employee emp)
+	public String update(Employee emp)
 	{
-		ModelAndView mv=new ModelAndView();
 		service.updateById(emp);
-		mv.setViewName("/employees");
-		return mv;
+		return "redirect:/employees";
 	}
 	
 }
-
-/* 
-import java.util.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
-
-import com.akkitech.Model.Employee;
-import com.akkitech.Service.EmployeeService;
-
-@RestController
-public class EmployeeController {
-
-
-	@Autowired
-	EmployeeService service;
-	@RequestMapping(value = "/index")
-	public String name() {
-		return "index";
-	}
-	
-	//Save Employee
-	@PostMapping(value = "/employee")
-	public Employee add(Employee employee)
-	{
-		return service.add(employee);
-		
-	}
-	
-	//Save Multiple Employee
-	@PostMapping(value = "/employees")
-	public ModelAndView addAll(@RequestBody List<Employee> employee)
-	{
-		ModelAndView mv=new ModelAndView("/employees");
-		service.addAll(employee);
-		return mv;
-	}
-	
-	//Fetch List of Employees
-	@GetMapping(value = "/employees")
-	public List<Employee> getAllEmployee()
-	{
-		return service.getAllEmployee();
-		
-	}
-	
-	//Fetch Single Employee
-	@GetMapping(value = "/employee/{id}")
-	public Employee getEmpById(@PathVariable("id") int id)
-	{
-		return service.getEmpById(id);
-	}
-	
-	//Delete Employee
-	@DeleteMapping(value = "/employee/{id}")
-	public void deleteEmpById(@PathVariable("id") int id)
-	{
-		service.deleteEmpById(id);
-	}
-	
-	//Update Employee
-	@PutMapping(value = "/employee/{id}")
-	public String updateById(@PathVariable("id") int id, Employee employee)
-	{
-		service.updateById(id, employee);
-		return "Update Success....!!";
-
-	}
-	
-	
-}
-*/
